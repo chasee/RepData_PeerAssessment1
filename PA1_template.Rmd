@@ -120,10 +120,15 @@ for(i in 1:nrow(day.data)){
 
 # Make a panel plot containing a time series plot of the 5-minute interval and the average number of steps taken, averaged across all weekday days or weekend days
 new.by.interval <- group_by(day.data, interval)
-new.interval.avg <- summarize(new.by.interval, avg.steps = mean(steps, na.rm = TRUE), day.cat = day.cat)
-
-ggplot(data = new.interval.avg, aes(x = interval, y = avg.steps)) + 
-  geom_line(col = "steelblue") + 
-  facet_grid(day.cat ~ .)
+a <- filter(new.by.interval, day.cat == "weekday")
+a.int.avg <- summarize(a, avg.steps = mean(steps), day.cat = "weekday")
+b <- filter(new.by.interval, day.cat == "weekend")
+b.int.avg <- summarize(b, avg.steps = mean(steps), day.cat = "weekend")
+new.int.avg <- rbind(a.int.avg, b.int.avg)
+ggplot(data = new.int.avg, aes(x = interval, y = avg.steps)) +
+  geom_line(col = "steelblue") +
+  facet_grid(day.cat ~ .) + 
+  labs(title = "Average Daily Activity") + 
+  labs(x = "Interval (5 minute increments)", y = "Average Number of Steps Taken")
 
 ```
